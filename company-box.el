@@ -297,13 +297,12 @@ It doesn't nothing if a font icon is used."
     (company-box--update-image color))
   (run-hook-with-args 'company-box-selection-hook selection
                       (or (frame-parent) (selected-frame))))
-
 (defun company-box--render-buffer (string)
   (let ((selection company-selection))
     (with-current-buffer (company-box--get-buffer)
       (erase-buffer)
       (insert string "\n")
-      (setq mode-line-format nil
+      (setq mode-line-format " %q"
             display-line-numbers nil
             truncate-lines t
             cursor-in-non-selected-windows nil)
@@ -530,7 +529,7 @@ It doesn't nothing if a font icon is used."
           (width (+ (company-box--calc-len (window-buffer window) start end char-width)
                     char-width))
           (width (max (min width max-width)
-                      (* company-tooltip-minimum-width char-width)))
+                      (* (max company-tooltip-minimum-width 38) char-width)))
           (diff (abs (- (frame-pixel-width frame) width))))
     (or (and no-update width)
         (and (> diff 2) (set-frame-width frame width nil t)))))
