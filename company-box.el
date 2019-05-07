@@ -96,11 +96,7 @@
 Only the 'background' color is used in this face."
   :group 'company-box)
 
-(defface company-box-scrollbar
-  '((t :inherit company-box-selection))
-  "Face used for the scrollbar.
-Only the 'background' color is used in this face."
-  :group 'company-box)
+
 
 (defcustom company-box-color-icon t
   "Whether or not to color icons.
@@ -216,7 +212,7 @@ Examples:
 (defvar-local company-box--space nil)
 (defvar-local company-box--start nil)
 (defvar-local company-box--height nil)
-(defvar-local company-box--scrollbar-window nil)
+
 
 (defvar company-box-selection-hook nil
   "Hook run when the selection changed.")
@@ -387,7 +383,7 @@ It doesn't nothing if a font icon is used."
   (company-box--set-frame-position (company-box--get-frame))
   (unless (frame-visible-p (company-box--get-frame))
     (make-frame-visible (company-box--get-frame)))
-  (company-box--update-scrollbar (company-box--get-frame) t))
+  )
 
 (defun company-box--get-kind (candidate)
   (let ((list company-box-icons-functions)
@@ -532,7 +528,6 @@ It doesn't nothing if a font icon is used."
                    (window-end window)))
           (max-width (- (frame-pixel-width) company-box--x char-width))
           (width (+ (company-box--calc-len (window-buffer window) start end char-width)
-                    (if (company-box--scrollbar-p frame) (* 2 char-width) 0)
                     char-width))
           (width (max (min width max-width)
                       (* company-tooltip-minimum-width char-width)))
@@ -543,56 +538,6 @@ It doesn't nothing if a font icon is used."
 (defun company-box--percent (a b)
   (/ (float a) b))
 
-(defun company-box--scrollbar-p (frame)
-  (/= 1 (company-box--percent
-         company-box--height
-         (* (min company-candidates-length company-box-max-candidates)
-            (frame-char-height frame)))))
-
-(defun company-box--update-scrollbar-buffer (height-blank height-scrollbar percent buffer)
-  (with-current-buffer buffer
-    (erase-buffer)
-    (setq header-line-format nil
-          mode-line-format nil
-          cursor-in-non-selected-windows nil)
-    (unless (zerop height-blank)
-      (insert (propertize " " 'display `(space :align-to right-fringe :height ,height-blank))
-              (propertize "\n" 'face '(:height 1))))
-    (setq height-scrollbar (if (= percent 1)
-                               ;; Due to float/int casting in the emacs code, there might 1 or 2
-                               ;; remainings pixels
-                               (+ height-scrollbar 10)
-                             height-scrollbar))
-    (insert (propertize " " 'face (list :background (face-background 'company-box-scrollbar nil t))
-                        'display `(space :align-to right-fringe :height ,height-scrollbar)))
-    (current-buffer)))
-
-(defun company-box--update-scrollbar (frame &optional first)
-  (let* ((selection company-selection)
-         (buffer (company-box--get-buffer "-scrollbar"))
-         (h-frame company-box--height)
-         (n-elements (min company-candidates-length company-box-max-candidates))
-         (percent (company-box--percent selection (1- n-elements)))
-         (percent-display (company-box--percent h-frame (* n-elements (frame-char-height frame))))
-         (scrollbar-pixels (* h-frame percent-display))
-         (height-scrollbar (/ scrollbar-pixels (frame-char-height frame)))
-         (blank-pixels (* (- h-frame scrollbar-pixels) percent))
-         (height-blank (/ blank-pixels (frame-char-height frame))))
-    (cond
-     ((and first (= percent-display 1) (window-live-p company-box--scrollbar-window))
-      (delete-window company-box--scrollbar-window))
-     ((window-live-p company-box--scrollbar-window)
-      (company-box--update-scrollbar-buffer height-blank height-scrollbar percent buffer))
-     ((/= percent-display 1)
-      (setq
-       company-box--scrollbar-window
-       (with-selected-frame (company-box--get-frame)
-         (display-buffer-in-side-window
-          (company-box--update-scrollbar-buffer height-blank height-scrollbar percent buffer)
-          '((side . right) (window-width . 0.02)))))
-      (set-frame-parameter frame 'company-box-scrollbar (window-buffer company-box--scrollbar-window))
-      (window-preserve-size company-box--scrollbar-window t t)))))
-
 ;; ;; (message "selection: %s len: %s PERCENT: %s PERCENTS-DISPLAY: %s SIZE-FRAME: %s HEIGHT-S: %s HEIGHT-B: %s h-frame: %s sum: %s"
 ;; ;;          selection n-elements percent percent-display height height-scrollbar height-blank height (+ height-scrollbar height-blank))
 ;; ;; (message "HEIGHT-S-1: %s HEIGHT-B-1: %s sum: %s" scrollbar-pixels blank-pixels (+ height-scrollbar-1 height-blank-1))
@@ -601,7 +546,7 @@ It doesn't nothing if a font icon is used."
   (let ((selection company-selection))
     (with-selected-window (get-buffer-window (company-box--get-buffer) t)
       (company-box--update-line selection))
-    (company-box--update-scrollbar (company-box--get-frame))))
+    ))
 
 (defun company-box--next-line nil
   (interactive)
@@ -666,7 +611,7 @@ COMMAND: See `company-frontends'."
         company-box--start nil
         company-box--edges nil)
   (company-box--set-frame-position (company-box--get-frame))
-  (company-box--update-scrollbar (company-box--get-frame) t))
+  )
 
 (defun company-box--kill-delay (buffer)
   (run-with-idle-timer
@@ -676,7 +621,7 @@ COMMAND: See `company-frontends'."
 
 (defun company-box--kill-buffer (frame)
   (company-box--kill-delay (frame-parameter frame 'company-box-buffer))
-  (company-box--kill-delay (frame-parameter frame 'company-box-scrollbar)))
+  )
 
 (defvar company-box-mode-map nil
   "Keymap when `company-box' is active")
