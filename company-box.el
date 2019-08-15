@@ -536,9 +536,10 @@ It doesn't nothing if a font icon is used."
                     char-width))
           (width (max (min width max-width)
                       (* company-tooltip-minimum-width char-width)))
-          (diff (abs (- (frame-pixel-width frame) width))))
+          (diff (-  width (frame-pixel-width frame))))
     (or (and no-update width)
-        (and (> diff 2) (set-frame-width frame width nil t)))))
+        (and (> diff 0) (set-frame-width frame width nil t))
+        width)))
 
 (defun company-box--percent (a b)
   (/ (float a) b))
