@@ -401,8 +401,7 @@ It doesn't nothing if a font icon is used."
     (company-box--set-frame (company-box--make-frame)))
   (company-box--set-frame-position (company-box--get-frame))
   (unless (frame-visible-p (company-box--get-frame))
-    (make-frame-visible (company-box--get-frame)))
-  (company-box--update-scrollbar (company-box--get-frame) t))
+    (make-frame-visible (company-box--get-frame))))
 
 (defun company-box--get-kind (candidate)
   (let ((list company-box-icons-functions)
@@ -555,7 +554,7 @@ It doesn't nothing if a font icon is used."
                    (window-end window)))
           (max-width (- (frame-pixel-width) company-box--x char-width))
           (width (+ (company-box--calc-len (window-buffer window) start end char-width)
-                    (if (company-box--scrollbar-p frame) (* 2 char-width) 0)
+                    0; (if (company-box--scrollbar-p frame) (* 2 char-width) 0)
                     char-width))
           (width (max (min width max-width)
                       (* company-tooltip-minimum-width char-width)))
@@ -624,8 +623,7 @@ It doesn't nothing if a font icon is used."
 (defun company-box--change-line nil
   (let ((selection company-selection))
     (with-selected-window (get-buffer-window (company-box--get-buffer) t)
-      (company-box--update-line selection))
-    (company-box--update-scrollbar (company-box--get-frame))))
+      (company-box--update-line selection))))
 
 (defun company-box--next-line nil
   (interactive)
@@ -690,8 +688,7 @@ COMMAND: See `company-frontends'."
         company-box--start nil
         company-box--edges nil)
   (when (company-box--get-frame)
-    (company-box--set-frame-position (company-box--get-frame))
-    (company-box--update-scrollbar (company-box--get-frame) t)))
+    (company-box--set-frame-position (company-box--get-frame))))
 
 (defun company-box--kill-delay (buffer)
   (run-with-idle-timer
@@ -752,3 +749,4 @@ COMMAND: See `company-frontends'."
 
 (provide 'company-box)
 ;;; company-box.el ends here
+
