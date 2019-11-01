@@ -226,5 +226,47 @@ specification.md#completion-request-leftwards_arrow_with_hook.")
   (when (get-text-property 0 'yas-annotation candidate)
     'Template))
 
+(defun company-box-icons--tern (candidate)
+  "Return the icon type that corresponds to CANDIDATE with company-tern."
+  (when (and (derived-mode-p 'js-mode)
+	     (require 'company-tern nil t))
+      (cond ((company-tern-function-p candidate) 'Function)
+	    ((company-tern-property-p candidate) 'Property)
+	    (t 'Variable))))
+
+(defun company-box-icons--irony (candidate)
+  "Return the icon type that corresponds to CANDIDATE with company-irony."
+  (when (and (or (derived-mode-p 'c-mode)
+		 (derived-mode-p 'c++-mode))
+	     (require 'company-irony nil t))
+    (let* ((irony-candidate (get-text-property 0 'company-irony candidate))
+	   (type (irony-completion-type irony-candidate))
+	   (annotation (irony-completion-annotation irony-candidate)))
+      (cond ((eq type "") 'Property)
+	    ((and (> (string-width type) 6)
+		  (string= (substring type 0 6) "struct")) 'Class)
+	    ((eq annotation "") 'Variable)
+	    (t 'Function)))))
+
+(defconst company-box-icons--anaconda-alist
+  '(("function" . Function)
+    ("statement" . Variable)
+    ("module" . Module)
+    ("keyword" . Keyword)
+    ("class" . Class)
+    ("instance" . Property))
+  "List of icon types to use with Anaconda candidates.")
+
+(defun company-box-icons--anaconda (candidate)
+  "Return the icon type that corresponds to CANDIDATE with company-anaconda."
+  (when (and (derived-mode-p 'python-mode)
+	     (require 'company-anaconda nil t))
+    (--when-let (aref (get-text-property 0 'struct candidate) 1)
+      (alist-get it company-box-icons--anaconda-alist nil nil 'string=))))
+
+(declare-function company-tern-property-p "ext:company-tern.el")
+(declare-function company-tern-function-p "ext:company-tern.el")
+(declare-function irony-completion-type "ext:irony-completion.el")
+(declare-function irony-completion-annotation "ext:irony-completion.el")
 (provide 'company-box-icons)
 ;;; company-box-icons.el ends here
