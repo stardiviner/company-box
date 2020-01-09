@@ -227,6 +227,9 @@ Examples:
 (defvar company-box-max-width 80
   "When company-box-restrict-width is non-nil, restricts the popup frame to this many characters wide.")
 
+(defvar company-box-hide-annotations t
+  "When non-nil, hides annotations.")
+
 (defun company-box--get-frame ()
   "Return the child frame."
   (frame-parameter nil 'company-box-frame))
@@ -492,6 +495,7 @@ It doesn't nothing if a font icon is used."
                                (replace-regexp-in-string "[ \t\n\r]+" " ")
                                (string-trim)))
          (candidate (company-box--truncate-candidate candidate))
+         (annotation (if company-box-hide-annotations "" annotation))
          (len-candidate (string-width candidate))
          (len-annotation (if annotation (string-width annotation) 0))
          (len-total (+ len-candidate len-annotation))
