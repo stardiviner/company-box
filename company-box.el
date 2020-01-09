@@ -221,6 +221,12 @@ Examples:
 (defvar company-box-selection-hook nil
   "Hook run when the selection changed.")
 
+(defvar company-box-restrict-width t
+  "When non-nil, restricts the popup frame to company-box-max-width characters wide.")
+
+(defvar company-box-max-width 80
+  "When company-box-restrict-width is non-nil, restricts the popup frame to this many characters wide.")
+
 (defun company-box--get-frame ()
   "Return the child frame."
   (frame-parameter nil 'company-box-frame))
@@ -475,10 +481,17 @@ It doesn't nothing if a font icon is used."
       (and (symbolp company-backend) company-backend)
       (--first (and it (not (keywordp it))) company-backend)))
 
+(defun company-box--truncate-candidate (candidate)
+  (when company-box-restrict-width
+    (if (> (length candidate) company-box-max-width)
+        (concat (substring candidate 0 (- company-box-max-width 4)) " ...")
+      candidate)))
+
 (defun company-box--make-candidate (candidate)
   (let* ((annotation (-some->> (company-call-backend 'annotation candidate)
                                (replace-regexp-in-string "[ \t\n\r]+" " ")
                                (string-trim)))
+         (candidate (company-box--truncate-candidate candidate))
          (len-candidate (string-width candidate))
          (len-annotation (if annotation (string-width annotation) 0))
          (len-total (+ len-candidate len-annotation))
