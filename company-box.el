@@ -358,6 +358,8 @@ It doesn't nothing if a font icon is used."
           (base-char-height (frame-char-height frame))
           (buffer (with-selected-frame frame (company-box--get-buffer)))
           (spacing (buffer-local-value 'line-spacing buffer))
+          ;; TODO: why do we have to do this?
+          (spacing 1)
           (char-height (pcase spacing
                          ((pred integerp) (+ spacing base-char-height))
                          ((pred floatp) (round (* (1+ spacing) base-char-height)))
