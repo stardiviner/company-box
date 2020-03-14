@@ -40,7 +40,9 @@
   (defun company-box-icons-image (file)
     `(image :type png
             :file ,(concat company-box-icons-dir file)
-            :ascent center)))
+            :ascent center
+            :width 14
+            :height 14)))
 
 (defvar company-box-icons-icons-in-terminal
   '((Unknown fa_question_circle)
@@ -268,5 +270,15 @@ specification.md#completion-request-leftwards_arrow_with_hook.")
 (declare-function company-tern-function-p "ext:company-tern.el")
 (declare-function irony-completion-type "ext:irony-completion.el")
 (declare-function irony-completion-annotation "ext:irony-completion.el")
+
+(defun company-box-icons-resize (size)
+  "Set icons size in pixels."
+  (interactive "nIcon size in pixels: ")
+  (mapc (lambda (icon)
+          (-> icon
+              (plist-put :height size)
+              (plist-put :width size)))
+        company-box-icons-images))
+
 (provide 'company-box-icons)
 ;;; company-box-icons.el ends here
