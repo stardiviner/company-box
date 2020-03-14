@@ -246,7 +246,7 @@ Examples:
 (defvar company-box-max-width 80
   "When company-box-restrict-width is non-nil, restricts the popup frame to this many characters wide.")
 
-(defvar company-box-hide-annotations t
+(defvar company-box-hide-annotations nil
   "When non-nil, hides annotations.")
 
 (defun company-box--get-frame ()
