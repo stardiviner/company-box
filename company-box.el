@@ -240,6 +240,15 @@ Examples:
 (defvar company-box-selection-hook nil
   "Hook run when the selection changed.")
 
+(defvar company-box-restrict-width t
+  "When non-nil, restricts the popup frame to company-box-max-width characters wide.")
+
+(defvar company-box-max-width 80
+  "When company-box-restrict-width is non-nil, restricts the popup frame to this many characters wide.")
+
+(defvar company-box-hide-annotations t
+  "When non-nil, hides annotations.")
+
 (defun company-box--get-frame ()
   "Return the child frame."
   (frame-parameter nil 'company-box-frame))
@@ -431,8 +440,7 @@ It doesn't nothing if a font icon is used."
     (company-box--set-frame (company-box--make-frame)))
   (company-box--set-frame-position (company-box--get-frame))
   (unless (frame-visible-p (company-box--get-frame))
-    (make-frame-visible (company-box--get-frame)))
-  (company-box--update-scrollbar (company-box--get-frame) t))
+    (make-frame-visible (company-box--get-frame))))
 
 (defun company-box--get-kind (candidate)
   (let ((list company-box-icons-functions)
@@ -518,10 +526,18 @@ It doesn't nothing if a font icon is used."
       (and (symbolp company-backend) company-backend)
       (--first (and it (not (keywordp it))) company-backend)))
 
+(defun company-box--truncate-candidate (candidate)
+  (when company-box-restrict-width
+    (if (> (length candidate) company-box-max-width)
+        (concat (substring candidate 0 (- company-box-max-width 4)) " ...")
+      candidate)))
+
 (defun company-box--make-candidate (candidate)
   (let* ((annotation (-some->> (company-call-backend 'annotation candidate)
                                (replace-regexp-in-string "[ \t\n\r]+" " ")
                                (string-trim)))
+         (candidate (company-box--truncate-candidate candidate))
+         (annotation (if company-box-hide-annotations "" annotation))
          (len-candidate (string-width candidate))
          (len-annotation (if annotation (string-width annotation) 0))
          (len-total (+ len-candidate len-annotation))
@@ -780,3 +796,4 @@ COMMAND: See `company-frontends'."
 
 (provide 'company-box)
 ;;; company-box.el ends here
+
