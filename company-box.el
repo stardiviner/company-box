@@ -340,7 +340,7 @@ It doesn't nothing if a font icon is used."
                 (line-beginning-position 2))
   (move-overlay (company-box--get-ov-common)
                 (+ company-box--icon-offset (line-beginning-position))
-                (+ 1 (length common) (+ company-box--icon-offset (line-beginning-position))))
+                (+ (length common) (+ company-box--icon-offset (line-beginning-position))))
   (let ((color (or (get-text-property (point) 'company-box--color)
                    'company-box-selection)))
     (overlay-put (company-box--get-ov) 'face color)
