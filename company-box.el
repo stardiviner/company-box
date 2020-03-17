@@ -455,6 +455,7 @@ It doesn't nothing if a font icon is used."
     (or kind 'Unknown)))
 
 (defun company-box--get-icon (candidate)
+  (company-box-icons-resize company-box-icons-image-size)
   (let ((icon (alist-get (company-box--get-kind candidate)
                          (symbol-value company-box-icons-alist))))
     (cond ((listp icon)

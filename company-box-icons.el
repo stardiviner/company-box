@@ -30,6 +30,12 @@
 
 (require 'dash)
 
+(defcustom company-box-icons-image-size 15
+  "Specify icons image size."
+  :type 'number
+  :safe #'numberp
+  :group 'company-box)
+
 (eval-when-compile
   (require 'find-func)
   (defconst company-box-icons-dir
@@ -41,8 +47,8 @@
     `(image :type png
             :file ,(concat company-box-icons-dir file)
             :ascent center
-            :width 14
-            :height 14)))
+            :width ,company-box-icons-image-size
+            :height ,company-box-icons-image-size)))
 
 (defvar company-box-icons-icons-in-terminal
   '((Unknown fa_question_circle)
