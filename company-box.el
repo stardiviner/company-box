@@ -442,7 +442,9 @@ It doesn't nothing if a font icon is used."
     (company-box--set-frame (company-box--make-frame)))
   (company-box--set-frame-position (company-box--get-frame))
   (unless (frame-visible-p (company-box--get-frame))
-    (make-frame-visible (company-box--get-frame))))
+    (make-frame-visible (company-box--get-frame)))
+  (if company-box-scrollbar
+      (company-box--update-scrollbar (company-box--get-frame) t)))
 
 (defun company-box--get-kind (candidate)
   (let ((list company-box-icons-functions)
