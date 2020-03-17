@@ -113,6 +113,11 @@ Note that icons from images cannot be colored."
   :type 'boolean
   :group 'company-box)
 
+(defcustom company-box-hide-annotations nil
+  "When non-nil, hides annotations."
+  :type 'boolean
+  :group 'company-box)
+
 (defcustom company-box-max-candidates 100
   "Maximum number of candidates.
 A big number might slowndown the rendering.
@@ -245,9 +250,6 @@ Examples:
 
 (defvar company-box-max-width 80
   "When company-box-restrict-width is non-nil, restricts the popup frame to this many characters wide.")
-
-(defvar company-box-hide-annotations nil
-  "When non-nil, hides annotations.")
 
 (defun company-box--get-frame ()
   "Return the child frame."
