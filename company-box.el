@@ -815,6 +815,10 @@ COMMAND: See `company-frontends'."
   (unless (frame-live-p (company-box-doc--get-frame))
     (set-frame-parameter nil 'company-box-doc-frame nil)))
 
+(if (featurep 'circadian)
+    (with-eval-after-load 'circadian
+      (add-hook 'circadian-after-load-theme-hook #'company-box-child-frame-reset)))
+
 ;;;###autoload
 (define-minor-mode company-box-mode
   "Company-box minor mode."
