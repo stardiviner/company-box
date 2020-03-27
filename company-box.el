@@ -676,6 +676,15 @@ It doesn't nothing if a font icon is used."
       (company-box--update-line selection common))
     (company-box--update-scrollbar (company-box--get-frame))))
 
+;; fix company-box not scrolling issue.
+(advice-add 'company-next-page :after #'company-box--change-line)
+(advice-add 'company-previous-page :after #'company-box--change-line)
+(advice-add 'company-search-candidates :after #'company-box--change-line)
+(advice-add 'company-filter-candidates :after #'company-box--change-line)
+(advice-add 'company-search-repeat-forward :after #'company-box--change-line)
+(advice-add 'company-search-repeat-backward :after #'company-box--change-line)
+;; (advice-add 'company-select-next :after #'company-box--change-line)
+
 (defun company-box--next-line ()
   (interactive)
   (when (< (1+ company-selection) (min company-candidates-length

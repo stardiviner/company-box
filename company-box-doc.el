@@ -163,7 +163,8 @@
 
 (defun company-box-doc-manually ()
   (interactive)
-  (company-box-doc--show company-selection (or (frame-parent) (selected-frame))))
+  (company-box-doc--show company-selection (or (frame-parent) (selected-frame)))
+  (company-box--change-line))
 
 (define-key company-active-map [remap company-show-doc-buffer] 'company-box-doc-manually)
 
