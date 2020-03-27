@@ -794,6 +794,27 @@ COMMAND: See `company-frontends'."
 (add-hook 'company-box-selection-hook 'company-box-doc)
 (add-hook 'company-box-hide-hook 'company-box-doc--hide)
 
+;; reset company-box child frame
+(defun company-box-doc--get-frame ()
+  (frame-parameter nil 'company-box-doc-frame))
+
+(defun company-box-child-frame-reset ()
+  "Delete old child-frame, then `company-box' create new child-frame."
+  (interactive)
+  ;; delete all frames except current frame.
+  (mapc (lambda (frame)
+          (unless (equal frame (selected-frame))
+            (delete-frame frame)))
+        (frame-list))
+  (if (frame-live-p (company-box--get-frame))
+      (delete-frame (company-box--get-frame)))
+  (unless (frame-live-p (company-box--get-frame))
+    (company-box--set-frame (company-box--make-frame)))
+  (if (company-box-doc--get-frame)
+      (delete-frame (company-box-doc--get-frame)))
+  (unless (frame-live-p (company-box-doc--get-frame))
+    (set-frame-parameter nil 'company-box-doc-frame nil)))
+
 ;;;###autoload
 (define-minor-mode company-box-mode
   "Company-box minor mode."
