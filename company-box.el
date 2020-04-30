@@ -63,6 +63,7 @@
 (unless (require 'icons-in-terminal nil t)
   (defun icons-in-terminal (&rest _) " "))
 
+(require 'subr-x)
 (require 'dash)
 (require 'dash-functional)
 (require 'company)
@@ -311,7 +312,7 @@ Examples:
   (or company-box--ov
       (setq company-box--ov (make-overlay 1 1))))
 
-(defun company-box--get-ov-common ()
+(defun company-box--get-ov-common nil
   (or company-box--ov-common
       (setq company-box--ov-common (make-overlay 1 1))))
 
@@ -337,12 +338,11 @@ It doesn't nothing if a font icon is used."
   (company-box--update-image)
   (goto-char 1)
   (forward-line selection)
-  (move-overlay (company-box--get-ov)
-                (line-beginning-position)
-                (line-beginning-position 2))
-  (move-overlay (company-box--get-ov-common)
-                (+ company-box--icon-offset (line-beginning-position))
-                (+ (length common) (+ company-box--icon-offset (line-beginning-position))))
+  (let ((beg (line-beginning-position)))
+    (move-overlay (company-box--get-ov) beg (line-beginning-position 2))
+    (move-overlay (company-box--get-ov-common)
+                  (+ company-box--icon-offset beg)
+                  (+ 1 (length common) (+ company-box--icon-offset beg))))
   (let ((color (or (get-text-property (point) 'company-box--color)
                    'company-box-selection)))
     (overlay-put (company-box--get-ov) 'face color)
@@ -503,11 +503,8 @@ It doesn't nothing if a font icon is used."
           (color (company-box--get-color backend))
           ((c-color a-color i-color s-color) (company-box--resolve-colors color))
           (icon-string (and company-box--with-icons-p (company-box--add-icon candidate)))
-          (candidate-string (if company-common
-                                (concat (propertize company-common 'face 'company-tooltip-common)
-                                        (substring (propertize candidate 'face 'company-box-candidate)
-                                                   (length company-common) nil))
-                              (propertize candidate 'face 'company-box-candidate)))
+          (candidate-string (concat (and company-common (propertize company-common 'face 'company-tooltip-common))
+                                    (substring (propertize candidate 'face 'company-box-candidate) (length company-common) nil)))
           (align-string (when annotation
                           (concat " " (and company-tooltip-align-annotations
                                            (propertize " " 'display `(space :align-to (- right-fringe ,(or len-a 0) 1)))))))
@@ -669,7 +666,7 @@ It doesn't nothing if a font icon is used."
 ;; ;;          selection n-elements percent percent-display height height-scrollbar height-blank height (+ height-scrollbar height-blank))
 ;; ;; (message "HEIGHT-S-1: %s HEIGHT-B-1: %s sum: %s" scrollbar-pixels blank-pixels (+ height-scrollbar-1 height-blank-1))
 
-(defun company-box--change-line ()
+(defun company-box--change-line nil
   (let ((selection company-selection)
         (common company-common))
     (with-selected-window (get-buffer-window (company-box--get-buffer) t)
